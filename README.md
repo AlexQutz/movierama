@@ -51,42 +51,11 @@ docker-compose down -v
 docker build -t movierama:latest .
 ```
 
-### Run the Application Container
-
-```bash
-# Run with environment variables
-docker run -p 8080:8080 \
-  -e SPRING_DATASOURCE_URL=jdbc:postgresql://host.docker.internal:5432/movierama \
-  -e SPRING_DATASOURCE_USERNAME=movierama \
-  -e SPRING_DATASOURCE_PASSWORD=movierama123 \
-  movierama:latest
-```
-
 ## Development Workflow
-
-### Hot Reload Development
-
-For development with hot reload, you can mount your source code:
-
-```bash
-# Run with volume mounting for development
-docker run -p 8080:8080 \
-  -v $(pwd)/src:/app/src \
-  -v $(pwd)/target:/app/target \
-  -e SPRING_PROFILES_ACTIVE=docker \
-  movierama:latest
-```
 
 ### Database Migrations
 
 Database migrations are automatically applied when the application starts. The migration files are located in `src/main/resources/db/migration/`.
-
-To add new migrations:
-1. Create new SQL files in `src/main/resources/db/migration/`
-2. Follow Flyway naming convention: `V{version}__{description}.sql`
-3. Rebuild and restart the containers
-
-## Configuration
 
 ### Environment Variables
 
@@ -100,46 +69,6 @@ The application can be configured using environment variables:
 | `SPRING_DATASOURCE_PASSWORD` | `movierama123` | Database password |
 | `SPRING_REDIS_HOST` | `redis` | Redis host |
 | `SPRING_REDIS_PORT` | `6379` | Redis port |
-
-### Custom Configuration
-
-To use custom configuration:
-
-1. Create a custom `application.properties` file
-2. Mount it as a volume:
-   ```bash
-   docker run -v /path/to/your/application.properties:/app/application.properties movierama:latest
-   ```
-
-## Troubleshooting
-
-### Common Issues
-
-1. **Port Already in Use**
-   ```bash
-   # Check what's using the port
-   lsof -i :8080
-   
-   # Kill the process or change the port in docker-compose.yml
-   ```
-
-2. **Database Connection Issues**
-   ```bash
-   # Check if PostgreSQL is running
-   docker-compose ps
-   
-   # View database logs
-   docker-compose logs postgres
-   ```
-
-3. **Application Won't Start**
-   ```bash
-   # Check application logs
-   docker-compose logs app
-   
-   # Check if all dependencies are healthy
-   docker-compose ps
-   ```
 
 ### Logs
 
@@ -203,7 +132,6 @@ movierama/
 ├── docker-compose.yml        # Multi-container orchestration
 ├── .dockerignore            # Docker build context exclusions
 ├── src/main/resources/
-│   ├── application.properties
-│   └── application-docker.properties  # Docker-specific config
-└── README-Docker.md         # This file
+│   ├── application.yml
+└── README.md
 ```

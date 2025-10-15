@@ -42,16 +42,15 @@ services:
       dockerfile: Dockerfile
     container_name: movierama-app
     environment:
-      SPRING_PROFILES_ACTIVE: docker
       SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/movierama
       SPRING_DATASOURCE_USERNAME: movierama
       SPRING_DATASOURCE_PASSWORD: movierama123
-      SPRING_JPA_HIBERNATE_DDL_AUTO: validate
       SPRING_JPA_SHOW_SQL: false
       SPRING_FLYWAY_ENABLED: true
       SPRING_FLYWAY_URL: jdbc:postgresql://postgres:5432/movierama
       SPRING_FLYWAY_USER: movierama
       SPRING_FLYWAY_PASSWORD: movierama123
+      SPRING_FLYWAY_BASELINE_ON_MIGRATE: true
       SPRING_REDIS_HOST: redis
       SPRING_REDIS_PORT: 6379
     ports:
