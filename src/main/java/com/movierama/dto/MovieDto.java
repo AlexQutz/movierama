@@ -29,7 +29,11 @@ public class MovieDto {
         this.likeCount = likeCount;
         this.hateCount = hateCount;
     }
+
+
 }
+
+
 
 
 

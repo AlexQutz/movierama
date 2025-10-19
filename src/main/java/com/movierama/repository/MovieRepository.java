@@ -17,6 +17,8 @@ public interface MovieRepository extends JpaRepository<Movie, Long> {
     List<Movie> findByUserIdOrderByCreatedAtDesc(Long userId);
     
     Page<Movie> findAllByOrderByCreatedAtDesc(Pageable pageable);
+
+    Page<Movie> findByUserId(Long userId, Pageable pageable);
     
     @Query("SELECT m FROM Movie m WHERE m.title ILIKE %:title% OR m.description ILIKE %:description%")
     List<Movie> findByTitleOrDescriptionContainingIgnoreCase(@Param("title") String title, @Param("description") String description);
@@ -31,6 +33,5 @@ public interface MovieRepository extends JpaRepository<Movie, Long> {
            "ORDER BY COUNT(CASE WHEN r.reactionType = 'HATE' THEN 1 END) DESC, m.createdAt DESC")
     List<Movie> findAllOrderByHatesDesc();
 
-    @Query("SELECT m FROM Movie m WHERE m.user.id = :userId AND LOWER(m.title) = LOWER(:title)")
-    Optional<Movie> findByUserIdAndTitleIgnoreCase(@Param("userId") Long userId, @Param("title") String title);
+    Optional<Movie> findByTitleIgnoreCase(String title);
 }

@@ -1,11 +1,19 @@
 package com.movierama.entity;
 
-import jakarta.persistence.*;
-import lombok.AccessLevel;
+import jakarta.persistence.CascadeType;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
+import jakarta.persistence.FetchType;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.OneToMany;
+import jakarta.persistence.PrePersist;
+import jakarta.persistence.PreUpdate;
+import jakarta.persistence.Table;
 import lombok.Data;
-import lombok.EqualsAndHashCode;
-import lombok.NoArgsConstructor;
-import lombok.ToString;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -24,29 +32,29 @@ public class User implements UserDetails {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     
-    @Column(unique = true, nullable = false)
+    @Column
     private String username;
     
-    @Column(unique = true, nullable = false)
+    @Column
     private String email;
     
-    @Column(nullable = false)
+    @Column
     private String password;
     
-    @Column(name = "first_name")
+    @Column
     private String firstName;
     
-    @Column(name = "last_name")
+    @Column
     private String lastName;
     
-    @Column(name = "created_at", nullable = false)
+    @Column
     private LocalDateTime createdAt;
     
-    @Column(name = "updated_at")
+    @Column
     private LocalDateTime updatedAt;
     
     @Enumerated(EnumType.STRING)
-    @Column(nullable = false)
+    @Column
     private Role role = Role.USER;
     
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY)

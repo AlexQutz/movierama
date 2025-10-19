@@ -11,6 +11,6 @@ CREATE INDEX IF NOT EXISTS idx_movies_user_id ON movie(user_id);
 CREATE INDEX IF NOT EXISTS idx_movies_created_at ON movie(created_at);
 CREATE INDEX IF NOT EXISTS idx_movies_title ON movie(title);
 
-CREATE UNIQUE INDEX IF NOT EXISTS uniq_movie_user_title_ci
-    ON movie (user_id, lower(title));
+CREATE UNIQUE INDEX IF NOT EXISTS uniq_movie_title
+    ON movie (lower(title));
 

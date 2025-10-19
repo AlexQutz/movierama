@@ -4,8 +4,6 @@ import com.movierama.dto.UserRegistrationDto;
 import com.movierama.entity.User;
 import com.movierama.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
-import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -14,17 +12,10 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 @RequiredArgsConstructor
 @Transactional
-public class UserService implements UserDetailsService {
+public class UserService {
     
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
-    
-    @Override
-    @Transactional(readOnly = true)
-    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        return userRepository.findByUsernameOrEmail(username, username)
-                .orElseThrow(() -> new UsernameNotFoundException("User not found: " + username));
-    }
     
     public User registerUser(UserRegistrationDto registrationDto) {
         if (userRepository.existsByUsername(registrationDto.getUsername())) {
@@ -58,6 +49,7 @@ public class UserService implements UserDetailsService {
                 .orElseThrow(() -> new RuntimeException("User not found with id: " + id));
     }
 }
+
 
 
 

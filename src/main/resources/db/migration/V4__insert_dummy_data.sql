@@ -1,19 +1,19 @@
 INSERT INTO user_profile (username, email, password, first_name, last_name, role, created_at, updated_at)
-VALUES ('john_doe', 'john.doe@example.com', '12345678', 'John',
+VALUES ('john_doe', 'john.doe@example.com', 'y6r8Dluh4daxYZoMKXGR4eW3jKdJm8hkLlSgm85JmeG5RHMT2ugKK', 'John',
         'Doe', 'USER', '2024-01-15 10:30:00', '2024-01-15 10:30:00'),
-       ('jane_smith', 'jane.smith@example.com', '12345678', 'Jane',
+       ('jane_smith', 'jane.smith@example.com', 'y6r8Dluh4daxYZoMKXGR4eW3jKdJm8hkLlSgm85JmeG5RHMT2ugKK', 'Jane',
         'Smith', 'USER', '2024-01-16 14:20:00', '2024-01-16 14:20:00'),
-       ('mike_wilson', 'mike.wilson@example.com', '12345678',
+       ('mike_wilson', 'mike.wilson@example.com', 'y6r8Dluh4daxYZoMKXGR4eW3jKdJm8hkLlSgm85JmeG5RHMT2ugKK',
         'Mike', 'Wilson', 'USER', '2024-01-17 09:15:00', '2024-01-17 09:15:00'),
-       ('sarah_jones', 'sarah.jones@example.com', '12345678',
+       ('sarah_jones', 'sarah.jones@example.com', 'y6r8Dluh4daxYZoMKXGR4eW3jKdJm8hkLlSgm85JmeG5RHMT2ugKK',
         'Sarah', 'Jones', 'USER', '2024-01-18 16:45:00', '2024-01-18 16:45:00'),
-       ('admin_user', 'admin@movierama.com', '12345678', 'Admin',
+       ('admin_user', 'admin@movierama.com', 'y6r8Dluh4daxYZoMKXGR4eW3jKdJm8hkLlSgm85JmeG5RHMT2ugKK', 'Admin',
         'User', 'ADMIN', '2024-01-10 08:00:00', '2024-01-10 08:00:00'),
-       ('alex_brown', 'alex.brown@example.com', '12345678', 'Alex',
+       ('alex_brown', 'alex.brown@example.com', 'y6r8Dluh4daxYZoMKXGR4eW3jKdJm8hkLlSgm85JmeG5RHMT2ugKK', 'Alex',
         'Brown', 'USER', '2024-01-19 11:30:00', '2024-01-19 11:30:00'),
-       ('emma_davis', 'emma.davis@example.com', '12345678', 'Emma',
+       ('emma_davis', 'emma.davis@example.com', 'y6r8Dluh4daxYZoMKXGR4eW3jKdJm8hkLlSgm85JmeG5RHMT2ugKK', 'Emma',
         'Davis', 'USER', '2024-01-20 13:20:00', '2024-01-20 13:20:00'),
-       ('chris_taylor', 'chris.taylor@example.com', '12345678',
+       ('chris_taylor', 'chris.taylor@example.com', 'y6r8Dluh4daxYZoMKXGR4eW3jKdJm8hkLlSgm85JmeG5RHMT2ugKK',
         'Chris', 'Taylor', 'USER', '2024-01-21 15:10:00', '2024-01-21 15:10:00') ON CONFLICT DO NOTHING;
 
 INSERT INTO movie (title, description, user_id, created_at, updated_at)
