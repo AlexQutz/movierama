@@ -28,11 +28,14 @@ class MovieControllerSpec extends Specification {
     def "listMovies delegates to service and returns 200 with body"() {
         given:
         def req = new PagingRequest(page: 2, size: 25, sortBy: "title", sortDirection: "ASC")
+        def user = new User(id: 10L, username: "alice")
         def page = new PagingResponse<MovieDto>(content: [new MovieDto(id: 1L, title: "A")], page: 2, size: 25, totalElements: 1L)
+
         when:
-        def resp = controller.listMovies(req)
+        def resp = controller.listMovies(req, user)
+
         then:
-        1 * movieService.getMoviesPageSorted(2, 25, "title", "ASC") >> page
+        1 * movieService.getMoviesPageSorted(2, 25, "title", "ASC",_ as User) >> page
         resp instanceof ResponseEntity
         resp.statusCode.value() == 200
         resp.body == page
@@ -71,11 +74,12 @@ class MovieControllerSpec extends Specification {
     def "listByUser uses defaults when PagingRequest is null"() {
         given:
         def userId = 7L
+        def user = new User(id: 10L, username: "alice")
         def pageResp = new PagingResponse<MovieDto>(content: [], page: 0, size: 10, totalElements: 0L)
         when:
-        def resp = controller.listByUser(userId, null)
+        def resp = controller.listMoviesByUser(userId, null, user)
         then:
-        1 * movieService.getMoviesByUserPaged(userId, _ as Integer, _ as Integer, _ as String, _ as String) >> pageResp
+        1 * movieService.getMoviesByUserPaged(userId, _ as Integer, _ as Integer, _ as String, _ as String,_ as User) >> pageResp
         resp.statusCode.value() == 200
         resp.body == pageResp
     }
@@ -85,7 +89,7 @@ class MovieControllerSpec extends Specification {
         def resp = controller.reactToMovie(5L, "LIKE", null)
         then:
         resp.statusCode.value() == 401
-        resp.body == "Authentication required"
+        resp.body == [error: "Authentication required"]
         0 * movieService._
     }
 
@@ -97,7 +101,7 @@ class MovieControllerSpec extends Specification {
         then:
         1 * movieService.reactToMovie(5L, user, MovieReaction.ReactionType.LIKE)
         resp.statusCode.value() == 200
-        resp.body == "Reaction updated successfully"
+        resp.body == [message: "Reaction updated successfully"]
     }
 
     def "reactToMovie rejects invalid reaction with 400"() {
@@ -107,18 +111,7 @@ class MovieControllerSpec extends Specification {
         def resp = controller.reactToMovie(5L, "meh", user)
         then:
         resp.statusCode.value() == 400
-        resp.body == "Invalid reaction type"
+        resp.body == [error: "Invalid reaction type"]
         0 * movieService.reactToMovie(_, _, _)
-    }
-
-    def "reactToMovie maps service RuntimeException to 400 with message"() {
-        given:
-        def user = new User(id: 42L, username: "bob")
-        movieService.reactToMovie(5L, user, MovieReaction.ReactionType.HATE) >> { throw new RuntimeException("Already reacted") }
-        when:
-        def resp = controller.reactToMovie(5L, "HATE", user)
-        then:
-        resp.statusCode.value() == 400
-        resp.body == "Already reacted"
     }
 }

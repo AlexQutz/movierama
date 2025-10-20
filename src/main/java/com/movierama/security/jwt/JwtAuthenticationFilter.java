@@ -48,6 +48,20 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             }
         }
 
+        String path = request.getRequestURI();
+        if ("OPTIONS".equalsIgnoreCase(request.getMethod())
+                || path.startsWith("/api/auth/")
+                || "/error".equals(path)) {
+            filterChain.doFilter(request, response);
+            return;
+        }
+
+        String auth = request.getHeader("Authorization");
+        if (auth == null || !auth.startsWith("Bearer ")) {
+            filterChain.doFilter(request, response);
+            return;
+        }
+
         filterChain.doFilter(request, response);
     }
 }

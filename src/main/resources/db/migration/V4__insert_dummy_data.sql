@@ -1,19 +1,19 @@
 INSERT INTO user_profile (username, email, password, first_name, last_name, role, created_at, updated_at)
-VALUES ('john_doe', 'john.doe@example.com', 'y6r8Dluh4daxYZoMKXGR4eW3jKdJm8hkLlSgm85JmeG5RHMT2ugKK', 'John',
+VALUES ('john_doe', 'john.doe@example.com', '$2a$10$yjpApi.UdBcOEZu.h4iRo.27bKPbbPrAQFoRc0Jmej.Wize6U3AYe', 'John',
         'Doe', 'USER', '2024-01-15 10:30:00', '2024-01-15 10:30:00'),
-       ('jane_smith', 'jane.smith@example.com', 'y6r8Dluh4daxYZoMKXGR4eW3jKdJm8hkLlSgm85JmeG5RHMT2ugKK', 'Jane',
+       ('jane_smith', 'jane.smith@example.com', '$2a$10$yjpApi.UdBcOEZu.h4iRo.27bKPbbPrAQFoRc0Jmej.Wize6U3AYe', 'Jane',
         'Smith', 'USER', '2024-01-16 14:20:00', '2024-01-16 14:20:00'),
-       ('mike_wilson', 'mike.wilson@example.com', 'y6r8Dluh4daxYZoMKXGR4eW3jKdJm8hkLlSgm85JmeG5RHMT2ugKK',
+       ('mike_wilson', 'mike.wilson@example.com', '$2a$10$yjpApi.UdBcOEZu.h4iRo.27bKPbbPrAQFoRc0Jmej.Wize6U3AYe',
         'Mike', 'Wilson', 'USER', '2024-01-17 09:15:00', '2024-01-17 09:15:00'),
-       ('sarah_jones', 'sarah.jones@example.com', 'y6r8Dluh4daxYZoMKXGR4eW3jKdJm8hkLlSgm85JmeG5RHMT2ugKK',
+       ('sarah_jones', 'sarah.jones@example.com', '$2a$10$yjpApi.UdBcOEZu.h4iRo.27bKPbbPrAQFoRc0Jmej.Wize6U3AYe',
         'Sarah', 'Jones', 'USER', '2024-01-18 16:45:00', '2024-01-18 16:45:00'),
-       ('admin_user', 'admin@movierama.com', 'y6r8Dluh4daxYZoMKXGR4eW3jKdJm8hkLlSgm85JmeG5RHMT2ugKK', 'Admin',
+       ('admin_user', 'admin@movierama.com', '$2a$10$yjpApi.UdBcOEZu.h4iRo.27bKPbbPrAQFoRc0Jmej.Wize6U3AYe', 'Admin',
         'User', 'ADMIN', '2024-01-10 08:00:00', '2024-01-10 08:00:00'),
-       ('alex_brown', 'alex.brown@example.com', 'y6r8Dluh4daxYZoMKXGR4eW3jKdJm8hkLlSgm85JmeG5RHMT2ugKK', 'Alex',
+       ('alex_brown', 'alex.brown@example.com', '$2a$10$yjpApi.UdBcOEZu.h4iRo.27bKPbbPrAQFoRc0Jmej.Wize6U3AYe', 'Alex',
         'Brown', 'USER', '2024-01-19 11:30:00', '2024-01-19 11:30:00'),
-       ('emma_davis', 'emma.davis@example.com', 'y6r8Dluh4daxYZoMKXGR4eW3jKdJm8hkLlSgm85JmeG5RHMT2ugKK', 'Emma',
+       ('emma_davis', 'emma.davis@example.com', '$2a$10$yjpApi.UdBcOEZu.h4iRo.27bKPbbPrAQFoRc0Jmej.Wize6U3AYe', 'Emma',
         'Davis', 'USER', '2024-01-20 13:20:00', '2024-01-20 13:20:00'),
-       ('chris_taylor', 'chris.taylor@example.com', 'y6r8Dluh4daxYZoMKXGR4eW3jKdJm8hkLlSgm85JmeG5RHMT2ugKK',
+       ('chris_taylor', 'chris.taylor@example.com', '$2a$10$yjpApi.UdBcOEZu.h4iRo.27bKPbbPrAQFoRc0Jmej.Wize6U3AYe',
         'Chris', 'Taylor', 'USER', '2024-01-21 15:10:00', '2024-01-21 15:10:00') ON CONFLICT DO NOTHING;
 
 INSERT INTO movie (title, description, user_id, created_at, updated_at)

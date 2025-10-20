@@ -34,6 +34,7 @@
 		<spock-core.version>2.4-M1-groovy-4.0</spock-core.version>
 		<groovy-all.version>4.0.16</groovy-all.version>
 		<gmavenplus-plugin.version>3.0.2</gmavenplus-plugin.version>
+		<wiremock.version>2.32.0</wiremock.version>
 	</properties>
 	<dependencies>
 		<dependency>
@@ -146,8 +147,20 @@
 			<scope>test</scope>
 		</dependency>
 		<dependency>
+			<groupId>org.spockframework</groupId>
+			<artifactId>spock-spring</artifactId>
+			<version>${spock-core.version}</version>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
 			<groupId>com.h2database</groupId>
 			<artifactId>h2</artifactId>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>com.github.tomakehurst</groupId>
+			<artifactId>wiremock-jre8</artifactId>
+			<version>${wiremock.version}</version>
 			<scope>test</scope>
 		</dependency>
 		<dependency>
@@ -222,7 +235,7 @@
 				<configuration>
 					<testSourceDirectory>src/test/groovy</testSourceDirectory>
 					<includes>
-						<include>**/*Specification.groovy</include>
+						<include>**/*Spec.groovy</include>
 						<include>**/*Test.groovy</include>
 					</includes>
 				</configuration>

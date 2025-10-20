@@ -1,9 +1,9 @@
-// File: src/test/groovy/com/movierama/service/UserServiceIntegrationSpec.groovy
 package com.movierama.service
 
 import com.movierama.dto.UserRegistrationDto
 import com.movierama.entity.User
 import com.movierama.repository.UserRepository
+import org.spockframework.spring.EnableSharedInjection
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.context.annotation.Bean
@@ -12,13 +12,12 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder
 import org.springframework.security.crypto.password.PasswordEncoder
 import org.springframework.test.context.ActiveProfiles
-import org.springframework.transaction.annotation.Transactional
 import spock.lang.Specification
 import spock.lang.Title
 
-@SpringBootTest
 @ActiveProfiles("test")
-@Transactional
+@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.DEFINED_PORT)
+@EnableSharedInjection
 @Title("Integration tests for UserService with real DB & PasswordEncoder")
 class UserServiceITSpec extends Specification {
 

@@ -9,6 +9,7 @@ import com.movierama.repository.MovieReactionRepository
 import com.movierama.repository.MovieRepository
 import com.movierama.repository.UserRepository
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.test.context.ActiveProfiles
 import org.springframework.transaction.annotation.Transactional
@@ -30,16 +31,13 @@ class MovieServiceITSpec extends Specification {
     private User reactor
 
     def setup() {
-        // Persist two users for ownership / reactions
         owner = userRepository.save(new User(username: "owner", email: "o@x.com", password: "p", firstName: "O", lastName: "W", role: User.Role.USER))
         reactor = userRepository.save(new User(username: "reactor", email: "r@x.com", password: "p", firstName: "R", lastName: "C", role: User.Role.USER))
     }
 
     def "createMovie persists with owner and can be read back"() {
         given:
-        def dto = new MovieRegistrationDto()
-        // If your DTO requires fields (e.g., title/description), set them here:
-        // dto.title = "Inception"; dto.description = "A mind-bender"
+        def dto = new MovieRegistrationDto(title: "inception", description: "lorem ipsum")
 
         when:
         Movie saved = movieService.createMovie(dto, owner)
@@ -72,8 +70,6 @@ class MovieServiceITSpec extends Specification {
 
         and: "first page should be A, B"
         resp.content*.class.every { it == MovieDto }  // mapped DTOs
-        // If MovieDto has a title field, you can assert on it:
-        // resp.content*.title == ["A", "B"]
     }
 
     def "getMoviesByUserPaged only returns movies of that user"() {

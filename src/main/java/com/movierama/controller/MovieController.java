@@ -20,6 +20,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.Map;
+import java.util.Objects;
+
 
 @RestController
 @RequestMapping("/api")
@@ -32,14 +35,38 @@ public class MovieController {
 
     @PostMapping("/movies")
     public ResponseEntity<PagingResponse<MovieDto>> listMovies(
-            @RequestBody PagingRequest pagingRequest
+            @RequestBody PagingRequest pagingRequest,
+            @AuthenticationPrincipal User user
     ) {
         PagingResponse<MovieDto> response = movieService.getMoviesPageSorted(
                 pagingRequest.getPage(),
                 pagingRequest.getSize(),
-                pagingRequest.getSortBy(),
-                pagingRequest.getSortDirection()
+                !Objects.equals(pagingRequest.getSortBy(), "") ? pagingRequest.getSortBy() : "",
+                pagingRequest.getSortDirection() != null ? pagingRequest.getSortDirection() : "",
+                user
         );
+        return ResponseEntity.ok(response);
+    }
+
+    @PostMapping("/movies/user/{userId}")
+    public ResponseEntity<PagingResponse<MovieDto>> listMoviesByUser(
+            @PathVariable Long userId,
+            @RequestBody PagingRequest pagingRequest,
+            @AuthenticationPrincipal User user
+    ) {
+        if (pagingRequest == null) {
+            pagingRequest = new PagingRequest();
+        }
+
+        PagingResponse<MovieDto> response = movieService.getMoviesByUserPaged(
+                userId,
+                pagingRequest.getPage(),
+                pagingRequest.getSize(),
+                pagingRequest.getSortBy(),
+                pagingRequest.getSortDirection(),
+                user
+        );
+
         return ResponseEntity.ok(response);
     }
 
@@ -61,44 +88,30 @@ public class MovieController {
     }
 
 
-    @PostMapping("secured/movies/user/{userId}")
-    public ResponseEntity<PagingResponse<MovieDto>> listByUser(
-            @PathVariable Long userId,
-            @RequestBody(required = false) PagingRequest pagingRequest
-    ) {
-        if (pagingRequest == null) {
-            pagingRequest = new PagingRequest();
-        }
 
-        PagingResponse<MovieDto> response = movieService.getMoviesByUserPaged(
-                userId,
-                pagingRequest.getPage(),
-                pagingRequest.getSize(),
-                pagingRequest.getSortBy(),
-                pagingRequest.getSortDirection()
-        );
-
-        return ResponseEntity.ok(response);
-    }
 
     @PostMapping("/secured/movies/{movieId}/react")
-    public ResponseEntity<String> reactToMovie(
+    public ResponseEntity<Map<String, String>> reactToMovie(
             @PathVariable Long movieId,
             @RequestParam String reaction,
             @AuthenticationPrincipal User userProfile
     ) {
         if (userProfile == null) {
-            return ResponseEntity.status(401).body("Authentication required");
+            return ResponseEntity.status(401)
+                    .body(Map.of("error", "Authentication required"));
         }
-
         try {
-            MovieReaction.ReactionType reactionType = MovieReaction.ReactionType.valueOf(reaction.toUpperCase());
+            MovieReaction.ReactionType reactionType =
+                    MovieReaction.ReactionType.valueOf(reaction.toUpperCase());
             movieService.reactToMovie(movieId, userProfile, reactionType);
-            return ResponseEntity.ok("Reaction updated successfully");
+            return ResponseEntity.ok(Map.of("message", "Reaction updated successfully"));
         } catch (IllegalArgumentException e) {
-            return ResponseEntity.badRequest().body("Invalid reaction type");
+            return ResponseEntity.badRequest()
+                    .body(Map.of("error", "Invalid reaction type"));
         } catch (RuntimeException e) {
-            return ResponseEntity.badRequest().body(e.getMessage());
+            return ResponseEntity.badRequest()
+                    .body(Map.of("error", e.getMessage()));
         }
     }
+
 }

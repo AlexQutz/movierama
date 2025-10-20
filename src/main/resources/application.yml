@@ -56,6 +56,6 @@ management:
 logging:
   level:
     com.movierama: INFO
-    org.springframework.security: DEBUG
-    org.hibernate.SQL: DEBUG
+    org.springframework.security: INFO
+    org.hibernate.SQL: INFO
     org.hibernate.type.descriptor.sql.BasicBinder: TRACE
