@@ -3,25 +3,27 @@ package com.movierama.controller
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.movierama.dto.UserRegistrationDto
 import com.movierama.security.jwt.JwtTokenProvider
+import com.movierama.service.ProfileService
 import com.movierama.service.UserService
-import org.junit.runner.RunWith
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest
+import org.springframework.boot.test.mock.mockito.MockBean
 import org.springframework.http.MediaType
 import org.springframework.security.authentication.AuthenticationManager
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken
 import org.springframework.security.core.Authentication
+import org.springframework.security.core.AuthenticationException
 import org.springframework.security.core.userdetails.User
-import org.springframework.test.context.junit4.SpringRunner
+import org.springframework.test.context.bean.override.mockito.MockitoBean
 import org.springframework.test.web.servlet.MockMvc
 import spock.lang.Specification
 
 import static org.mockito.ArgumentMatchers.any
 import static org.mockito.BDDMockito.given
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*
 
-@RunWith(SpringRunner)
 @WebMvcTest(controllers = AuthController)
 @AutoConfigureMockMvc(addFilters = false) // turn off security filters since we focus on controller behavior
 class AuthControllerITSpec extends Specification {
@@ -29,9 +31,10 @@ class AuthControllerITSpec extends Specification {
     @Autowired MockMvc mockMvc
     @Autowired ObjectMapper objectMapper
 
-    UserService userService
-    AuthenticationManager authenticationManager
-    JwtTokenProvider jwtTokenProvider
+    @MockitoBean UserService userService
+    @MockitoBean AuthenticationManager authenticationManager
+    @MockitoBean JwtTokenProvider jwtTokenProvider
+    @MockitoBean ProfileService profileService
 
     private String toJson(Object o) { objectMapper.writeValueAsString(o) }
 
@@ -72,19 +75,19 @@ class AuthControllerITSpec extends Specification {
                 .andExpect(jsonPath('$.token').value("jwt-abc-123"))
     }
 
-    def "POST /api/auth/login bubbles auth failures (adjust if you add @ControllerAdvice)"() {
-        given:
-        def login = new AuthController.LoginRequest(username: "alice", password: "bad")
-        and:
-        given(authenticationManager.authenticate(any(Authentication))).willAnswer {
-            throw new org.springframework.security.core.AuthenticationException("bad creds") {}
-        }
-        expect:
-        mockMvc.perform(
-                post("/api/auth/login")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(toJson(login))
-        )
-                .andExpect(status().is5xxServerError())
-    }
+           def "POST /api/auth/login bubbles auth failures"() {
+               given:
+               def login = new AuthController.LoginRequest(username: "alice", password: "bad")
+               and:
+               given(authenticationManager.authenticate(any(Authentication))).willAnswer {
+                   throw new AuthenticationException() {}
+               }
+               expect:
+               mockMvc.perform(
+                       post("/api/auth/login")
+                               .contentType(MediaType.APPLICATION_JSON)
+                               .content(toJson(login))
+               )
+                       .andExpect(status().isInternalServerError())
+           }
 }

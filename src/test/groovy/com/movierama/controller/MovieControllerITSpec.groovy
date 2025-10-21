@@ -11,22 +11,22 @@ import com.movierama.paging.PagingRequest
 import com.movierama.paging.PagingResponse
 import com.movierama.repository.MovieRepository
 import com.movierama.service.MovieService
-import org.junit.runner.RunWith
+import com.movierama.service.ProfileService
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest
 import org.springframework.http.MediaType
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken
-import org.springframework.test.context.junit4.SpringRunner
+import org.springframework.test.context.bean.override.mockito.MockitoBean
 import org.springframework.test.web.servlet.MockMvc
 import spock.lang.Specification
 import spock.lang.Stepwise
 
+import static org.mockito.ArgumentMatchers.*
 import static org.mockito.BDDMockito.given
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*
 
-@RunWith(SpringRunner)
 @WebMvcTest(controllers = MovieController)
 @AutoConfigureMockMvc(addFilters = false) // disable Spring Security filters since we test controller logic
 @Stepwise
@@ -35,9 +35,10 @@ class MovieControllerITSpec extends Specification {
     @Autowired MockMvc mockMvc
     @Autowired ObjectMapper objectMapper
 
-     MovieService movieService
-     MovieMapper movieMapper
-     MovieRepository movieRepository
+    @MockitoBean MovieService movieService
+    @MockitoBean MovieMapper movieMapper
+    @MockitoBean MovieRepository movieRepository
+    @MockitoBean ProfileService profileService
 
     private String toJson(Object o) { objectMapper.writeValueAsString(o) }
 
@@ -46,7 +47,7 @@ class MovieControllerITSpec extends Specification {
         def req = new PagingRequest(page: 1, size: 5, sortBy: "title", sortDirection: "DESC")
         def dto = new MovieDto(id: 3L, title: "Zootopia")
         def page = new PagingResponse<MovieDto>(content: [dto], page: 1, size: 5, totalElements: 1L)
-        given(movieService.getMoviesPageSorted(1, 5, "title", "DESC")).willReturn(page)
+        given(movieService.getMoviesPageSorted(1, 5, "title", "DESC", any(User.class))).willReturn(page)
         expect:
         mockMvc.perform(
                 post("/api/movies")
@@ -75,31 +76,31 @@ class MovieControllerITSpec extends Specification {
                 .andExpect(status().isInternalServerError()) // RuntimeException bubbles; if you add @ControllerAdvice, update this accordingly
     }
 
-    def "POST /api/secured/movies creates movie and maps to DTO"() {
-        given:
-        def reg = new MovieRegistrationDto(title: "Arrival")
-        def saved = new Movie(id: 1L, title: "Arrival")
-        def dto = new MovieDto(id: 1L, title: "Arrival")
-        given(movieRepository.findByTitleIgnoreCase("Arrival")).willReturn(Optional.empty())
-        given(movieService.createMovie(any(MovieRegistrationDto), any(User))).willReturn(saved)
-        given(movieMapper.toDto(saved)).willReturn(dto)
-        expect:
-        mockMvc.perform(
-                post("/api/secured/movies")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(toJson(reg))
-                        .principal(new UsernamePasswordAuthenticationToken(new User(id: 11L, username: "bob"), null))
-        )
-                .andExpect(status().isOk())
-                .andExpect(jsonPath('$.id').value(1))
-                .andExpect(jsonPath('$.title').value("Arrival"))
-    }
+           def "POST /api/secured/movies creates movie and maps to DTO"() {
+               given:
+               def reg = new MovieRegistrationDto(title: "Arrival")
+               def saved = new Movie(id: 1L, title: "Arrival")
+               def dto = new MovieDto(id: 1L, title: "Arrival")
+               given(movieRepository.findByTitleIgnoreCase("Arrival")).willReturn(Optional.empty())
+               given(movieService.createMovie(any(MovieRegistrationDto), any(User))).willReturn(saved)
+               given(movieMapper.toDto(saved)).willReturn(dto)
+               expect:
+               mockMvc.perform(
+                       post("/api/secured/movies")
+                               .contentType(MediaType.APPLICATION_JSON)
+                               .content(toJson(reg))
+                               .principal(new UsernamePasswordAuthenticationToken(new User(id: 11L, username: "bob"), null))
+               )
+                       .andExpect(status().isOk())
+                       .andExpect(jsonPath('$.id').value(1))
+                       .andExpect(jsonPath('$.title').value("Arrival"))
+           }
 
     def "POST /api/secured/movies/user/{userId} defaults paging when body is null"() {
         given:
         def userId = 77L
         def response = new PagingResponse<MovieDto>(content: [], page: 0, size: 10, totalElements: 0L)
-        given(movieService.getMoviesByUserPaged(eq(userId), anyInt(), anyInt(), anyString(), anyString()))
+        given(movieService.getMoviesByUserPaged(eq(userId), anyInt(), anyInt(), anyString(), anyString(), any(User.class)))
                 .willReturn(response)
         expect:
         mockMvc.perform(

@@ -18,6 +18,7 @@ import spock.lang.Title
 
 @SpringBootTest
 @ActiveProfiles("test")
+@AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
 @Transactional
 @Title("Integration tests for MovieService with real DB & repositories")
 class MovieServiceITSpec extends Specification {
@@ -52,15 +53,15 @@ class MovieServiceITSpec extends Specification {
 
     def "getMoviesPageSorted returns sorted/paged list"() {
         given: "persist a few movies with different titles for deterministic sorting"
-        def mA = movieService.createMovie(new MovieRegistrationDto(/* title: "A" */), owner)
+        def mA = movieService.createMovie(new MovieRegistrationDto(title: "A"), owner)
         mA.title = "A"; movieRepository.save(mA)
-        def mC = movieService.createMovie(new MovieRegistrationDto(/* title: "C" */), owner)
+        def mC = movieService.createMovie(new MovieRegistrationDto(title: "C"), owner)
         mC.title = "C"; movieRepository.save(mC)
-        def mB = movieService.createMovie(new MovieRegistrationDto(/* title: "B" */), owner)
+        def mB = movieService.createMovie(new MovieRegistrationDto(title: "B"), owner)
         mB.title = "B"; movieRepository.save(mB)
 
         when:
-        def resp = movieService.getMoviesPageSorted(0, 2, "title", "ASC", owner.username)
+        def resp = movieService.getMoviesPageSorted(0, 2, "title", "ASC", owner)
 
         then:
         resp.page == 0
@@ -69,19 +70,18 @@ class MovieServiceITSpec extends Specification {
         resp.totalPages >= 2
 
         and: "first page should be A, B"
-        resp.content*.class.every { it == MovieDto }  // mapped DTOs
+        resp.content*.class.every { it == MovieDto }
     }
 
     def "getMoviesByUserPaged only returns movies of that user"() {
         given:
-        // Owner has 2 movies
-        def m1 = movieService.createMovie(new MovieRegistrationDto(), owner)
-        def m2 = movieService.createMovie(new MovieRegistrationDto(), owner)
+        def m1 = movieService.createMovie(new MovieRegistrationDto(title: "Spiderman"), owner)
+        def m2 = movieService.createMovie(new MovieRegistrationDto(title: "Point Break"), owner)
         // Reactor as another uploader
-        movieService.createMovie(new MovieRegistrationDto(), reactor)
+        movieService.createMovie(new MovieRegistrationDto(title: "The Matrix"), reactor)
 
         when:
-        def resp = movieService.getMoviesByUserPaged(owner.id, 0, 10, "id", "ASC")
+        def resp = movieService.getMoviesByUserPaged(owner.id, 0, 10, "id", "ASC", owner)
 
         then:
         resp.totalElements == 2
@@ -90,7 +90,7 @@ class MovieServiceITSpec extends Specification {
 
     def "reactToMovie creates, updates, and toggles reactions"() {
         given:
-        def movie = movieService.createMovie(new MovieRegistrationDto(), owner)
+        def movie = movieService.createMovie(new MovieRegistrationDto(title: "Batman Begins"), owner)
 
         when: "reactor likes"
         movieService.reactToMovie(movie.id, reactor, MovieReaction.ReactionType.LIKE)
@@ -100,14 +100,14 @@ class MovieServiceITSpec extends Specification {
         r1.reactionType == MovieReaction.ReactionType.LIKE
 
         when: "reactor changes to dislike"
-        movieService.reactToMovie(movie.id, reactor, MovieReaction.ReactionType.DISLIKE)
+        movieService.reactToMovie(movie.id, reactor, MovieReaction.ReactionType.HATE)
 
         then:
         def r2 = reactionRepository.findByUserIdAndMovieId(reactor.id, movie.id).get()
-        r2.reactionType == MovieReaction.ReactionType.DISLIKE
+        r2.reactionType == MovieReaction.ReactionType.HATE
 
         when: "reactor sends dislike again -> toggle off (delete)"
-        movieService.reactToMovie(movie.id, reactor, MovieReaction.ReactionType.DISLIKE)
+        movieService.reactToMovie(movie.id, reactor, MovieReaction.ReactionType.HATE)
 
         then:
         !reactionRepository.findByUserIdAndMovieId(reactor.id, movie.id).isPresent()
@@ -115,7 +115,7 @@ class MovieServiceITSpec extends Specification {
 
     def "reactToMovie prevents reacting to own movie"() {
         given:
-        def movie = movieService.createMovie(new MovieRegistrationDto(), owner)
+        def movie = movieService.createMovie(new MovieRegistrationDto(title: "Star Wars"), owner)
 
         when:
         movieService.reactToMovie(movie.id, owner, MovieReaction.ReactionType.LIKE)

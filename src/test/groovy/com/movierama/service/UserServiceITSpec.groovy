@@ -5,6 +5,7 @@ import com.movierama.entity.User
 import com.movierama.repository.UserRepository
 import org.spockframework.spring.EnableSharedInjection
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
@@ -12,12 +13,15 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder
 import org.springframework.security.crypto.password.PasswordEncoder
 import org.springframework.test.context.ActiveProfiles
+import org.springframework.transaction.annotation.Transactional
 import spock.lang.Specification
 import spock.lang.Title
 
 @ActiveProfiles("test")
-@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.DEFINED_PORT)
+@SpringBootTest
+@AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
 @EnableSharedInjection
+@Transactional
 @Title("Integration tests for UserService with real DB & PasswordEncoder")
 class UserServiceITSpec extends Specification {
 
@@ -96,15 +100,4 @@ class UserServiceITSpec extends Specification {
         )
     }
 
-    /**
-     * Test config to ensure a PasswordEncoder bean exists in tests.
-     * If your main app context already defines this, you can remove this class.
-     */
-    @Configuration
-    static class TestSecurityConfig {
-        @Bean
-        PasswordEncoder passwordEncoder() {
-            new BCryptPasswordEncoder()
-        }
-    }
 }

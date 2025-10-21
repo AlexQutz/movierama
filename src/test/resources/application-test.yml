@@ -18,6 +18,16 @@ spring:
   h2:
     console:
       enabled: true
+  flyway:
+    enabled: false
+  data:
+    redis:
+      host: localhost
+      port: 6379
+      timeout: 2000ms
+server:
+  port: 0
 logging:
   level:
     org.hibernate.SQL: warn
+    com.movierama: DEBUG
