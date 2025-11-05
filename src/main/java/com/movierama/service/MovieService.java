@@ -11,6 +11,8 @@ import com.movierama.repository.MovieReactionRepository;
 import com.movierama.repository.MovieRepository;
 import com.movierama.specification.MovieSpecification;
 import lombok.RequiredArgsConstructor;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -29,6 +31,7 @@ public class MovieService {
     private final MovieMapper movieMapper;
 
     @Transactional
+    @CacheEvict(value = {"movies", "moviePage"}, allEntries = true)
     public Movie createMovie(MovieRegistrationDto movieDto, User user) {
         Movie movie = movieMapper.toEntity(movieDto);
         movie.setUser(user);
@@ -36,6 +39,7 @@ public class MovieService {
     }
 
     @Transactional(readOnly = true)
+    @Cacheable(value = "moviePage", key = "#page + '_' + #size + '_' + #sortBy + '_' + #sortDirection + '_' + (#user != null ? #user.id : 'null')")
     public PagingResponse<MovieDto> getMoviesPageSorted(
             int page, int size, String sortBy, String sortDirection, User user) {
 
@@ -58,6 +62,7 @@ public class MovieService {
     }
 
     @Transactional(readOnly = true)
+    @Cacheable(value = "moviePage", key = "'user_' + #userId + '_' + #page + '_' + #size + '_' + #sortBy + '_' + #sortDirection + '_' + (#user != null ? #user.id : 'null')")
     public PagingResponse<MovieDto> getMoviesByUserPaged(
             Long userId, int page, int size, String sortBy, String sortDirection, User user
     ) {
@@ -74,6 +79,7 @@ public class MovieService {
     }
 
     @Transactional
+    @CacheEvict(value = {"movies", "moviePage"}, allEntries = true)
     public void reactToMovie(Long movieId, User userProfile, MovieReaction.ReactionType reactionType) {
         Movie movie = movieRepository.findById(movieId)
                 .orElseThrow(() -> new RuntimeException("Movie not found"));
