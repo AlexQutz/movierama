@@ -100,18 +100,11 @@ public class MovieController {
             return ResponseEntity.status(401)
                     .body(Map.of("error", "Authentication required"));
         }
-        try {
-            MovieReaction.ReactionType reactionType =
-                    MovieReaction.ReactionType.valueOf(reaction.toUpperCase());
-            movieService.reactToMovie(movieId, userProfile, reactionType);
-            return ResponseEntity.ok(Map.of("message", "Reaction updated successfully"));
-        } catch (IllegalArgumentException e) {
-            return ResponseEntity.badRequest()
-                    .body(Map.of("error", "Invalid reaction type"));
-        } catch (RuntimeException e) {
-            return ResponseEntity.badRequest()
-                    .body(Map.of("error", e.getMessage()));
-        }
+
+        MovieReaction.ReactionType reactionType =
+                MovieReaction.ReactionType.valueOf(reaction.toUpperCase());
+        movieService.reactToMovie(movieId, userProfile, reactionType);
+        return ResponseEntity.ok(Map.of("message", "Reaction updated successfully"));
     }
 
 }

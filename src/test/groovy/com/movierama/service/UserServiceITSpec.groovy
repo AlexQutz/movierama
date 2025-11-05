@@ -1,5 +1,6 @@
 package com.movierama.service
 
+import com.movierama.config.TestContainersConfig
 import com.movierama.dto.UserRegistrationDto
 import com.movierama.entity.User
 import com.movierama.repository.UserRepository
@@ -9,6 +10,7 @@ import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabas
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
+import org.springframework.context.annotation.Import
 import org.springframework.security.core.userdetails.UsernameNotFoundException
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder
 import org.springframework.security.crypto.password.PasswordEncoder
@@ -20,6 +22,7 @@ import spock.lang.Title
 @ActiveProfiles("test")
 @SpringBootTest
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
+@Import(TestContainersConfig)
 @EnableSharedInjection
 @Transactional
 @Title("Integration tests for UserService with real DB & PasswordEncoder")
