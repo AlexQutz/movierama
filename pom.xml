@@ -35,6 +35,7 @@
 		<groovy-all.version>4.0.16</groovy-all.version>
 		<gmavenplus-plugin.version>3.0.2</gmavenplus-plugin.version>
 		<wiremock.version>2.32.0</wiremock.version>
+		<swagger.version>2.6.0</swagger.version>
 	</properties>
 	<dependencies>
 		<dependency>
@@ -68,6 +69,11 @@
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-data-redis</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.springdoc</groupId>
+			<artifactId>springdoc-openapi-starter-webmvc-ui</artifactId>
+			<version>${swagger.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>org.flywaydb</groupId>
@@ -224,11 +230,24 @@
 							<goal>compileTests</goal>
 						</goals>
 					</execution>
+					<execution>
+						<id>compile-integration-tests</id>
+						<goals>
+							<goal>compileTests</goal>
+						</goals>
+						<phase>test-compile</phase>
+					</execution>
 				</executions>
 				<configuration>
 					<testSources>
 						<testSource>
 							<directory>${project.basedir}/src/test/groovy</directory>
+							<includes>
+								<include>**/*.groovy</include>
+							</includes>
+						</testSource>
+						<testSource>
+							<directory>${project.basedir}/src/test-integration/groovy</directory>
 							<includes>
 								<include>**/*.groovy</include>
 							</includes>
@@ -246,7 +265,66 @@
 						<include>**/*Spec.groovy</include>
 						<include>**/*Test.groovy</include>
 					</includes>
+					<excludes>
+						<exclude>**/*ITSpec.groovy</exclude>
+					</excludes>
 				</configuration>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-failsafe-plugin</artifactId>
+				<version>3.2.2</version>
+				<executions>
+					<execution>
+						<goals>
+							<goal>integration-test</goal>
+							<goal>verify</goal>
+						</goals>
+					</execution>
+				</executions>
+				<configuration>
+					<includes>
+						<include>**/*ITSpec.class</include>
+						<include>**/*IT.class</include>
+					</includes>
+					<testClassesDirectory>${project.build.directory}/test-classes</testClassesDirectory>
+					<additionalClasspathElements>
+						<additionalClasspathElement>${project.build.directory}/test-classes</additionalClasspathElement>
+					</additionalClasspathElements>
+				</configuration>
+			</plugin>
+			<plugin>
+				<groupId>org.codehaus.mojo</groupId>
+				<artifactId>build-helper-maven-plugin</artifactId>
+				<version>3.4.0</version>
+				<executions>
+					<execution>
+						<id>add-test-integration-source</id>
+						<phase>generate-test-sources</phase>
+						<goals>
+							<goal>add-test-source</goal>
+						</goals>
+						<configuration>
+							<sources>
+								<source>src/test-integration/java</source>
+							</sources>
+						</configuration>
+					</execution>
+					<execution>
+						<id>add-test-integration-resources</id>
+						<phase>generate-test-resources</phase>
+						<goals>
+							<goal>add-test-resource</goal>
+						</goals>
+						<configuration>
+							<resources>
+								<resource>
+									<directory>src/test-integration/resources</directory>
+								</resource>
+							</resources>
+						</configuration>
+					</execution>
+				</executions>
 			</plugin>
 		</plugins>
 	</build>

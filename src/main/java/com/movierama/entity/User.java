@@ -61,9 +61,11 @@ public class User implements UserDetails {
     private Role role = Role.USER;
     
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @JsonIgnore
     private List<Movie> movies;
     
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @JsonIgnore
     private List<MovieReaction> reactions;
     
     @PrePersist

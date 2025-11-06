@@ -1,0 +1,39 @@
+version: '3'
+
+services:
+
+  # ─────────────────────────────────────────────
+  # Postgres for Integration Tests
+  # ─────────────────────────────────────────────
+  app-db-integration-tests:
+    container_name: movierama-db-integration-tests
+    image: postgres:15.10
+    shm_size: 1g
+    environment:
+      - POSTGRES_USER=test
+      - POSTGRES_PASSWORD=test
+      - POSTGRES_DB=movierama_test
+    ports:
+      - "54322:5432"
+
+  # ─────────────────────────────────────────────
+  # Redis for Integration Tests
+  # ─────────────────────────────────────────────
+  app-redis-integration-tests:
+    container_name: movierama-redis-integration-tests
+    image: redis
+    ports:
+      - "6380:6379"
+
+  # ─────────────────────────────────────────────
+  # Wiremock for Integration Tests
+  # ─────────────────────────────────────────────
+  da-app-wiremock:
+    image: "wiremock/wiremock:latest"
+    container_name: movierama-wiremock
+    environment:
+      WIREMOCK_OPTIONS: '-verbose'
+    ports:
+      - "8089:8080"
+    volumes:
+      - ./mocks:/home/wiremock

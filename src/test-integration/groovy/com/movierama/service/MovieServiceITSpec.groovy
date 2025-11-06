@@ -1,6 +1,6 @@
 package com.movierama.service
 
-import com.movierama.config.TestContainersConfig
+import com.movierama.BaseSpecification
 import com.movierama.dto.MovieDto
 import com.movierama.dto.MovieRegistrationDto
 import com.movierama.entity.Movie
@@ -10,21 +10,8 @@ import com.movierama.repository.MovieReactionRepository
 import com.movierama.repository.MovieRepository
 import com.movierama.repository.UserRepository
 import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase
-import org.springframework.boot.test.context.SpringBootTest
-import org.springframework.context.annotation.Import
-import org.springframework.test.context.ActiveProfiles
-import org.springframework.transaction.annotation.Transactional
-import spock.lang.Specification
-import spock.lang.Title
 
-@SpringBootTest
-@ActiveProfiles("test")
-@AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
-@Import(TestContainersConfig)
-@Transactional
-@Title("Integration tests for MovieService with real DB & repositories")
-class MovieServiceITSpec extends Specification {
+class MovieServiceITSpec extends BaseSpecification {
 
     @Autowired MovieService movieService
     @Autowired MovieRepository movieRepository

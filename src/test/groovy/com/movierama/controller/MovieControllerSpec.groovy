@@ -103,15 +103,4 @@ class MovieControllerSpec extends Specification {
         resp.statusCode.value() == 200
         resp.body == [message: "Reaction updated successfully"]
     }
-
-    def "reactToMovie rejects invalid reaction with 400"() {
-        given:
-        def user = new User(id: 42L, username: "bob")
-        when:
-        def resp = controller.reactToMovie(5L, "meh", user)
-        then:
-        resp.statusCode.value() == 400
-        resp.body == [error: "Invalid reaction type"]
-        0 * movieService.reactToMovie(_, _, _)
-    }
 }

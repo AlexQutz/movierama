@@ -4,14 +4,17 @@ import com.movierama.dto.MovieDto;
 import com.movierama.dto.MovieRegistrationDto;
 import com.movierama.entity.Movie;
 import com.movierama.entity.MovieReaction;
+import org.mapstruct.InjectionStrategy;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
-import org.mapstruct.factory.Mappers;
 
-@Mapper(componentModel = "spring")
+@Mapper(
+        componentModel = "spring",
+        injectionStrategy = InjectionStrategy.CONSTRUCTOR,
+        uses = {MovieMapper.class}
+)
 public interface MovieMapper {
 
-    MovieMapper INSTANCE = Mappers.getMapper(MovieMapper.class);
 
     @Mapping(target = "id", ignore = true)
     @Mapping(target = "createdAt", ignore = true)

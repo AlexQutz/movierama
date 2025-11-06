@@ -1,6 +1,7 @@
 package com.movierama.controller
 
 import com.fasterxml.jackson.databind.ObjectMapper
+import com.movierama.BaseSpecification
 import com.movierama.dto.MovieDto
 import com.movierama.dto.MovieRegistrationDto
 import com.movierama.entity.Movie
@@ -19,7 +20,6 @@ import org.springframework.http.MediaType
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken
 import org.springframework.test.context.bean.override.mockito.MockitoBean
 import org.springframework.test.web.servlet.MockMvc
-import spock.lang.Specification
 import spock.lang.Stepwise
 
 import static org.mockito.ArgumentMatchers.*
@@ -27,10 +27,9 @@ import static org.mockito.BDDMockito.given
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*
 
-@WebMvcTest(controllers = MovieController)
-@AutoConfigureMockMvc(addFilters = false) // disable Spring Security filters since we test controller logic
+
 @Stepwise
-class MovieControllerITSpec extends Specification {
+class MovieControllerITSpec extends BaseSpecification {
 
     @Autowired MockMvc mockMvc
     @Autowired ObjectMapper objectMapper

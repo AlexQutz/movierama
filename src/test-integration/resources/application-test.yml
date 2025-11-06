@@ -1,0 +1,34 @@
+spring:
+  datasource:
+    # Testcontainers will override this with the container connection
+    url: jdbc:postgresql://localhost:5432/movierama_test
+    username: test
+    password: test
+    driver-class-name: org.postgresql.Driver
+  jpa:
+    database-platform: org.hibernate.dialect.PostgreSQLDialect
+    hibernate:
+      ddl-auto: create-drop
+    properties:
+      hibernate:
+        format_sql: true
+        jdbc.time_zone: UTC
+  sql:
+    init:
+      mode: never
+  flyway:
+    enabled: false
+  data:
+    redis:
+      # Testcontainers will override this with the container connection
+      host: localhost
+      port: 6379
+      timeout: 2000ms
+  cache:
+    type: none
+server:
+  port: 0
+logging:
+  level:
+    org.hibernate.SQL: warn
+    com.movierama: DEBUG

@@ -1,6 +1,7 @@
 package com.movierama.controller
 
 import com.fasterxml.jackson.databind.ObjectMapper
+import com.movierama.BaseSpecification
 import com.movierama.dto.UserRegistrationDto
 import com.movierama.security.jwt.JwtTokenProvider
 import com.movierama.service.ProfileService
@@ -8,7 +9,6 @@ import com.movierama.service.UserService
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest
-import org.springframework.boot.test.mock.mockito.MockBean
 import org.springframework.http.MediaType
 import org.springframework.security.authentication.AuthenticationManager
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken
@@ -17,16 +17,13 @@ import org.springframework.security.core.AuthenticationException
 import org.springframework.security.core.userdetails.User
 import org.springframework.test.context.bean.override.mockito.MockitoBean
 import org.springframework.test.web.servlet.MockMvc
-import spock.lang.Specification
 
 import static org.mockito.ArgumentMatchers.any
 import static org.mockito.BDDMockito.given
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*
 
-@WebMvcTest(controllers = AuthController)
-@AutoConfigureMockMvc(addFilters = false) // turn off security filters since we focus on controller behavior
-class AuthControllerITSpec extends Specification {
+class AuthControllerITSpec extends BaseSpecification {
 
     @Autowired MockMvc mockMvc
     @Autowired ObjectMapper objectMapper
